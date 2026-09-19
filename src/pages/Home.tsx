@@ -9,6 +9,7 @@ interface BlogPost {
   blurb: string;
   dateTime: string;
   content?: string;
+  authorUuid?: string | null;
 }
 
 const COMMENTS_API_URL = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud:8081';
@@ -40,6 +41,7 @@ export const Home: React.FC = () => {
             const blurb = (item.pBlurb || item.blurb || '') as string;
             const content = (item.pContent || item.content || '') as string;
             const dateTime = (item.pDateTime || item.dateTime || '') as string;
+            const authorUuid = (item.pAuthorUuid ?? item.authorUuid ?? null) as string | null;
 
             let formattedDate = dateTime;
             try {
@@ -55,7 +57,7 @@ export const Home: React.FC = () => {
               // ignore
             }
 
-            return { id, title, blurb, content, dateTime: formattedDate };
+            return { id, title, blurb, content, dateTime: formattedDate, authorUuid };
           });
           setPosts(mappedPosts);
         } else {

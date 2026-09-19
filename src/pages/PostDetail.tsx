@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
 import { generatePostId, slugify } from '../utils/hash';
 import { Comments } from '../components/Comments';
-import { ArrowLeft, Calendar, User, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { ArrowLeft, Calendar, User, AlertCircle, Pencil, Trash2 } from 'lucide-react';
 
 interface BlogPost {
   id: number;
@@ -10,11 +11,15 @@ interface BlogPost {
   blurb: string;
   dateTime: string;
   content?: string;
+  authorUuid?: string | null;
 }
 
 export const PostDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, token, isAdmin, isWriter } = useAuth();
+  const [deleting, setDeleting] = useState(false);
 
   const [post, setPost] = useState<BlogPost | null>(() => {
     const locState = location.state as { post?: BlogPost } | null;
@@ -56,7 +61,8 @@ export const PostDetail: React.FC = () => {
             const blurb = (item.pBlurb || item.blurb || '') as string;
             const content = (item.pContent || item.content || '') as string;
             const dateTime = (item.pDateTime || item.dateTime || '') as string;
-            return { id, title, blurb, content, dateTime };
+            const authorUuid = (item.pAuthorUuid ?? item.authorUuid ?? null) as string | null;
+            return { id, title, blurb, content, dateTime, authorUuid };
           });
 
           const matched = mappedPosts.find((p: BlogPost) => slugify(p.title) === slug);
@@ -81,6 +87,36 @@ export const PostDetail: React.FC = () => {
       void fetchAndFindPost();
     }
   }, [slug, post, commentsApiUrl]);
+
+  // Admins may manage any post; writers only the ones they authored. The
+  // backend enforces the same rule -- this just hides controls that would fail.
+  const canManage =
+    !!post && !!token && (isAdmin || (isWriter && !!user && post.authorUuid === user.userId));
+
+  const handleDelete = async () => {
+    if (!post || !token) return;
+    if (!window.confirm('Delete "' + post.title + '"? This also removes its comments and cannot be undone.')) {
+      return;
+    }
+    try {
+      setDeleting(true);
+      const res = await fetch(commentsApiUrl + '/posts/' + post.id, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || res.statusText);
+      }
+      void navigate('/');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('Error deleting blog post:', err);
+      setError('Failed to delete post: ' + errorMsg);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const renderContent = (text: string) => {
     const normalized = text.replace(/\r\n/g, '\n');
@@ -175,6 +211,28 @@ export const PostDetail: React.FC = () => {
                 <User className="w-4 h-4" />
                 <span>By Sammy Thorne</span>
               </div>
+
+              {canManage && (
+                <div className="flex items-center gap-2 ml-auto">
+                  <Link
+                    to={'/edit/' + post.id}
+                    state={{ post }}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                    <span>Edit</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete()}
+                    disabled={deleting}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>{deleting ? 'Deleting...' : 'Delete'}</span>
+                  </button>
+                </div>
+              )}
             </div>
           </header>
 

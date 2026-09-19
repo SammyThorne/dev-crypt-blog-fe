@@ -23,6 +23,7 @@ function App() {
                 <Route path="/posts/:slug" element={<PostDetail />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/write" element={<WritePost />} />
+                <Route path="/edit/:postId" element={<WritePost />} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </main>

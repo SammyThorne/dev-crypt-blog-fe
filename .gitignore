@@ -27,7 +27,3 @@ dist-ssr
 .env
 client_secret_*.json
 
-# Backend Services & Build Artifacts
-backend/systemd/
-backend/comments-bin
-backend/dist-newstyle/
