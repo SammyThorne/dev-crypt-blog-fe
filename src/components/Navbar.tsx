@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -21,6 +21,8 @@ interface GoogleIdentityServices {
 
 declare const google: GoogleIdentityServices | undefined;
 
+const GSI_SCRIPT_SRC = 'https://accounts.google.com/gsi/client';
+
 export const Navbar: React.FC = () => {
   const { user, signIn, signOut, isAdmin, isModerator, isWriter } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -37,18 +39,36 @@ export const Navbar: React.FC = () => {
     else setTheme('light');
   };
 
+  // Keep the latest signIn in a ref so the GSI effect doesn't re-initialize on every render
+  const signInRef = useRef(signIn);
   useEffect(() => {
-    if (!user && typeof google !== 'undefined' && google) {
+    signInRef.current = signIn;
+  }, [signIn]);
+
+  useEffect(() => {
+    if (user) return;
+
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.error('VITE_GOOGLE_CLIENT_ID is not set; Google sign-in is unavailable.');
+      return;
+    }
+
+    const initGoogle = () => {
+      if (typeof google === 'undefined' || !google) {
+        console.error('Google Identity Services script loaded but `google` is undefined.');
+        return;
+      }
       try {
         google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1035659837943-dummy.apps.googleusercontent.com',
+          client_id: clientId,
           callback: (response: GoogleAuthResponse) => {
-            void signIn(response.credential).catch((err: unknown) => {
+            void signInRef.current(response.credential).catch((err: unknown) => {
               console.error('Google Auth login failed:', err);
             });
           },
         });
-        
+
         google.accounts.id.renderButton(
           document.getElementById('google-signin-button'),
           { theme: 'outline', size: 'medium', shape: 'pill' }
@@ -56,8 +76,27 @@ export const Navbar: React.FC = () => {
       } catch (err) {
         console.error('Error initializing Google Identity Services:', err);
       }
+    };
+
+    // The GSI script is async/defer, so it may not have loaded when this effect first runs.
+    if (typeof google !== 'undefined' && google) {
+      initGoogle();
+      return;
     }
-  }, [user, signIn]);
+
+    const script = document.querySelector<HTMLScriptElement>(`script[src="${GSI_SCRIPT_SRC}"]`);
+    if (!script) {
+      console.error('Google Identity Services script tag not found in index.html.');
+      return;
+    }
+    const onError = () => console.error('Failed to load Google Identity Services script.');
+    script.addEventListener('load', initGoogle);
+    script.addEventListener('error', onError);
+    return () => {
+      script.removeEventListener('load', initGoogle);
+      script.removeEventListener('error', onError);
+    };
+  }, [user]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

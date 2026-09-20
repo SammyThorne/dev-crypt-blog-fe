@@ -1,5 +1,5 @@
-import React from 'react';
-import { Terminal, Mail, Compass, Globe } from 'lucide-react';
+import React from "react";
+import { Code, Terminal, Mail, Compass, Globe } from "lucide-react";
 
 export const About: React.FC = () => {
   return (
@@ -13,7 +13,7 @@ export const About: React.FC = () => {
             Sammy Thorne
           </h1>
           <p className="text-lg text-[var(--accent)] font-semibold">
-            Software Engineer & Terminal Enthusiast
+            Software Engineer & Computer Scientist
           </p>
         </div>
       </div>
@@ -24,10 +24,16 @@ export const About: React.FC = () => {
             About Me
           </h2>
           <p>
-            Welcome! I am a computer science student and software developer. I build clean, efficient applications spanning both backend systems and modern web architectures. My engineering philosophy revolves around simplicity, understanding systems close to the hardware, and building reliable code.
+            Welcome! I am a computer science student and software developer. I
+            am a student at Washington State in Vancouver, Wa. I also am a
+            associate software engineer at Accelerate Learning!
           </p>
           <p>
-            While I prefer terminal tools, C, and Rust, I have learned to love the productivity of full-stack ecosystems. Rebuilding this blog in under two hours with React was proof of that! This space serves as my personal digital garden where I share my thoughts, software discoveries, and learnings along the way.
+            In the past I have prefered lower level programming languages such
+            as C and Rust. As I have entered the workforce I have been exposed
+            more to higher level programing languages such as Javascript and
+            Typescript. I have also had to deeply evolve my understanding of AI
+            tools.
           </p>
         </section>
 
@@ -38,7 +44,9 @@ export const About: React.FC = () => {
               <h3>Systems Engineering</h3>
             </div>
             <p className="text-sm">
-              Passionate about lower-level languages like C and Rust. I love understanding how operating systems, memory allocation, and hardware interactions drive software efficiency.
+              Passionate about lower-level languages like C and Rust. I love
+              building and understanding operating systems, memory allocation,
+              and hardware interactions.
             </p>
           </div>
 
@@ -48,7 +56,9 @@ export const About: React.FC = () => {
               <h3>Full Stack Development</h3>
             </div>
             <p className="text-sm">
-              Experienced building applications using Flutter & Dart, React & TypeScript, and backend architectures leveraging Node.js, REST APIs, and SQL.
+              Experienced building applications using Flutter & Dart, React &
+              TypeScript, and backend architectures leveraging Node.js, golang,
+              REST APIs, and Postgres/MySQL.
             </p>
           </div>
         </section>
@@ -58,16 +68,22 @@ export const About: React.FC = () => {
             Philosophy & Mentorship
           </h2>
           <p>
-            I believe that computer science is fundamentally about adaptability. Learning Javascript and React made me reflect on the importance of moving outside my comfort zone. It teaches you that a language is just a tool, and our real job is finding high-impact, maintainable solutions to actual problems.
+            I believe that computer science is fundamentally about adaptability.
+            Learning Javascript and React made me reflect on the importance of
+            moving outside my comfort zone. It teaches you that a language is
+            just a tool, and our real job is finding maintainable,
+            understandable and logistically viable solutions to problems.
           </p>
           <p>
-            A special shout-out to my academic mentors and university professors, who have made a lasting impact on my journey and guided me toward starting my first corporate software engineering career!
+            A special shout-out to my academic coalleags and university
+            professors, who have made a lasting impact on my journey and guided
+            me toward starting my first corporate software engineering career!
           </p>
         </section>
 
         <section className="pt-6 border-t border-[var(--border)] flex flex-wrap justify-center md:justify-start gap-6">
           <a
-            href="#"
+            href="https://github.com/SammyThorne"
             className="flex items-center gap-2 text-sm font-semibold hover:text-[var(--accent)] transition-colors"
           >
             <Globe className="w-4 h-4" />
@@ -79,6 +95,13 @@ export const About: React.FC = () => {
           >
             <Mail className="w-4 h-4" />
             <span>sammy@dev-crypt.com</span>
+          </a>
+          <a
+            href="https://leetcode.com/u/SammyThorne"
+            className="flex items-center gap-2 text-sm font-semibold hover:text-[var(--accent)] transition-colors"
+          >
+            <Code className="w-4 h-4" />
+            <span>LeetCode</span>
           </a>
         </section>
       </div>

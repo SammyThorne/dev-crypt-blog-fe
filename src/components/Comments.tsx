@@ -23,7 +23,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [newComment, setNewComment] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud:8081';
+  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud';
 
   const fetchComments = useCallback(async () => {
     try {

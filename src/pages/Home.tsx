@@ -12,7 +12,7 @@ interface BlogPost {
   authorUuid?: string | null;
 }
 
-const COMMENTS_API_URL = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud:8081';
+const COMMENTS_API_URL = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud';
 
 export const Home: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);

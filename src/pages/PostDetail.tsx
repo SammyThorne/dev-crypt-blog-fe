@@ -39,7 +39,7 @@ export const PostDetail: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
 
-  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud:8081';
+  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud';
 
   useEffect(() => {
     if (post) return; // already initialized from location state

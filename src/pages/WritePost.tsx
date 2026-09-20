@@ -29,7 +29,7 @@ export const WritePost: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud:8081';
+  const commentsApiUrl = import.meta.env.VITE_COMMENTS_API_URL || 'https://srv915664.hstgr.cloud';
 
   // On a direct load of /edit/:postId (no navigation state, e.g. a refresh or a
   // shared link) the post has to be looked up from the API.
